@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Coin Damage Calculator</title>
   <style>
     :root {
@@ -17,7 +17,6 @@
 
     * { box-sizing: border-box; }
 
-    /* NORMAL WEBSITE SCROLL (GitHub Pages) */
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -25,15 +24,13 @@
       color: var(--text);
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      overflow-y: auto; /* scrollbar restored */
-      min-height: 100vh;
-      padding: 24px;
+      padding: 20px;
+      overflow-y: auto; /* normal scrolling */
     }
 
     .card {
       width: 100%;
-      max-width: 560px;
+      max-width: 520px;
       background: linear-gradient(180deg, #020617, #020617f0);
       padding: 22px;
       border-radius: 18px;
@@ -42,15 +39,16 @@
 
     h1 {
       text-align: center;
-      margin: 0 0 14px;
+      margin: 0 0 16px;
+      letter-spacing: .5px;
     }
 
     h2 {
-      margin: 20px 0 8px;
+      margin: 18px 0 8px;
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: .08em;
-      opacity: .85;
+      opacity: .8;
     }
 
     .grid {
@@ -59,7 +57,9 @@
       gap: 10px;
     }
 
-    label { font-size: 13px; }
+    label {
+      font-size: 13px;
+    }
 
     input[type=number], select {
       width: 100%;
@@ -74,7 +74,7 @@
 
     button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 18px;
       padding: 12px;
       border-radius: 12px;
       border: none;
@@ -119,147 +119,153 @@
       margin-top: 8px;
     }
 
-    .frag { padding: 8px; border-radius: 10px; font-size: 12px; }
+    .frag {
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
     .frag span { font-weight: 700; display: block; margin-bottom: 4px; }
+
     .frag.slash { background: rgba(248,113,113,.15); }
     .frag.blunt { background: rgba(96,165,250,.15); }
     .frag.pierce { background: rgba(192,132,252,.15); }
 
     .result {
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 14px;
       background: var(--panel-soft);
       border-radius: 14px;
       font-size: 13px;
       line-height: 1.45;
-      word-wrap: break-word;
     }
 
-    hr {
-      border: none;
-      border-top: 1px solid #1e293b;
-      margin: 10px 0;
-    }
-
-    @media (max-width: 480px) {
-      .grid { grid-template-columns: 1fr; }
-    }
+    hr { border: none; border-top: 1px solid #1e293b; margin: 10px 0; }
   </style>
 </head>
 <body>
-<div class="card">
-  <h1>Damage Calculator</h1>
+  <div class="card">
+    <h1>Damage Calculator</h1>
+    <div class="layout">
+      <div class="inputs">
+        <h2>Base Stats</h2>
+        <div class="grid">
+          <label>Base Power<input type="number" id="basePower" value="0"></label>
+          <label>Coin Power<input type="number" id="coinPower" value="0"></label>
+          <label>Damage Up (%)<input type="number" id="damageUp" value="0"></label>
+          <label>Final Coin Boost (%)<input type="number" id="finalCoinBoost" value="0"></label>
+        </div>
 
-  <h2>Base Stats</h2>
-  <div class="grid">
-    <label>Base Power<input type="number" id="basePower" value="0"></label>
-    <label>Coin Power<input type="number" id="coinPower" value="0"></label>
-    <label>Damage Up (%)<input type="number" id="damageUp" value="0"></label>
-    <label>Final Coin Boost (%)<input type="number" id="finalCoinBoost" value="0"></label>
-  </div>
+        <h2>Coins</h2>
+        <label>Number of Coins<input type="number" id="coins" value="0" min="0" max="10" onchange="renderCoins()"></label>
+        <div class="coins" id="coinContainer"></div>
 
-  <h2>Coins</h2>
-  <label>Number of Coins<input type="number" id="coins" value="0" min="0" max="10" onchange="renderCoins()"></label>
-  <div class="coins" id="coinContainer"></div>
+        <h2>Enemy State</h2>
+        <div class="grid">
+          <label>Stagger<select id="staggerState"><option value="1">None</option><option value="2">Staggered ×2</option><option value="2.5">Staggered+ ×2.5</option><option value="3">Staggered++ ×3</option></select></label>
+          <label>Resistance<select id="resistState"><option value="1">None</option><option value="1.5">Fatal ×1.5</option><option value="1.25">Weak ×1.25</option><option value="0.75">Endure ×0.75</option><option value="0.5">Resist ×0.5</option></select></label>
+        </div>
 
-  <h2>Enemy State</h2>
-  <div class="grid">
-    <label>Stagger
-      <select id="staggerState">
-        <option value="1">None</option>
-        <option value="2">Staggered ×2</option>
-        <option value="2.5">Staggered+ ×2.5</option>
-        <option value="3">Staggered++ ×3</option>
-      </select>
-    </label>
-    <label>Resistance
-      <select id="resistState">
-        <option value="1">None</option>
-        <option value="1.5">Fatal ×1.5</option>
-        <option value="1.25">Weak ×1.25</option>
-        <option value="0.75">Endure ×0.75</option>
-        <option value="0.5">Resist ×0.5</option>
-      </select>
-    </label>
-  </div>
+        <h2>Fragility</h2>
+        <div class="fragility-box">
+          <label>General Fragile<input type="number" id="fragile" value="0"></label>
+          <div class="fragility-grid">
+            <div class="frag slash"><span>Slash</span><input type="number" id="slashFragile" value="0"></div>
+            <div class="frag blunt"><span>Blunt</span><input type="number" id="bluntFragile" value="0"></div>
+            <div class="frag pierce"><span>Pierce</span><input type="number" id="pierceFragile" value="0"></div>
+          </div>
+        </div>
 
-  <h2>Fragility</h2>
-  <div class="fragility-box">
-    <label>General Fragile<input type="number" id="fragile" value="0"></label>
-    <div class="fragility-grid">
-      <div class="frag slash"><span>Slash</span><input type="number" id="slashFragile" value="0"></div>
-      <div class="frag blunt"><span>Blunt</span><input type="number" id="bluntFragile" value="0"></div>
-      <div class="frag pierce"><span>Pierce</span><input type="number" id="pierceFragile" value="0"></div>
+        <button onclick="calculate()">Calculate</button>
+      </div>
+
+      <div class="results">
+        <h2>Results</h2>
+        <div class="result" id="output">No calculation yet.</div>
+      </div>
     </div>
   </div>
+    </div>
 
-  <button onclick="calculate()">Calculate</button>
-  <div class="result" id="output"></div>
-</div>
+    <button onclick="calculate()">Calculate</button>
+    <div class="result" id="output"></div>
+  </div>
 
 <script>
-function renderCoins() {
-  const container = document.getElementById('coinContainer');
-  container.innerHTML = '';
-  const count = Number(document.getElementById('coins').value);
+  function renderCoins() {
+    const container = document.getElementById('coinContainer');
+    container.innerHTML = '';
+    const count = Number(document.getElementById('coins').value);
 
-  for (let i = 1; i <= count; i++) {
-    const div = document.createElement('div');
-    div.className = 'coin';
-    div.innerHTML = `<span>Coin ${i}</span><span class="coin-controls"><label><input type="checkbox" id="coin${i}"> Head</label><label><input type="checkbox" id="crit${i}"> Crit</label></span>`;
-    container.appendChild(div);
-  }
-}
-
-function calculate() {
-  const basePowerVal = +basePower.value || 0;
-  const coinPowerVal = +coinPower.value || 0;
-  const coinsVal = +coins.value || 0;
-  const damageUpVal = (+damageUp.value || 0) / 100;
-  const finalCoinBoostVal = (+finalCoinBoost.value || 0) / 100;
-
-  const staggerMultiplier = +staggerState.value;
-  const resistMultiplier = +resistState.value;
-
-  const fragileMultiplier = 1 + (
-    +fragile.value + +slashFragile.value + +bluntFragile.value + +pierceFragile.value
-  ) * 0.1;
-
-  let previous = 0;
-  let finalTotal = 0;
-  let baseLog = [];
-  let finalLog = [];
-
-  for (let i = 1; i <= coinsVal; i++) {
-    const head = document.getElementById(`coin${i}`)?.checked;
-    const crit = document.getElementById(`crit${i}`)?.checked;
-
-    let dmg = i === 1
-      ? (head ? basePowerVal + coinPowerVal : basePowerVal)
-      : (head ? previous + coinPowerVal : previous);
-
-    baseLog.push(`Coin ${i}: ${dmg}`);
-
-    let final = dmg;
-    if (crit) final = Math.floor(final * 1.2);
-    final = Math.floor(final * (1 + damageUpVal));
-    if (i === coinsVal) final = Math.floor(final * (1 + finalCoinBoostVal));
-
-    finalTotal += final;
-    finalLog.push(`Coin ${i}: ${final}`);
-    previous = dmg;
+    for (let i = 1; i <= count; i++) {
+      const div = document.createElement('div');
+      div.className = 'coin';
+      div.innerHTML = `<span>Coin ${i}</span>
+        <span class="coin-controls">
+          <label><input type="checkbox" id="coin${i}"> Head</label>
+          <label><input type="checkbox" id="crit${i}"> Crit</label>
+        </span>`;
+      container.appendChild(div);
+    }
   }
 
-  const enemyTotal = Math.floor(finalTotal * staggerMultiplier * resistMultiplier * fragileMultiplier);
+  function calculate() {
+    const basePower = Number(document.getElementById('basePower').value) || 0;
+    const coinPower = Number(document.getElementById('coinPower').value) || 0;
+    const coins = Number(document.getElementById('coins').value) || 0;
+    const damageUp = (Number(document.getElementById('damageUp').value) || 0) / 100;
+    const finalCoinBoost = (Number(document.getElementById('finalCoinBoost').value) || 0) / 100;
 
-  output.innerHTML = `<strong>Normal Damage</strong><br>${baseLog.join('<br>')}<hr>` +
-    `<strong>Final Damage</strong><br>${finalLog.join('<br>')}<br><strong>Total:</strong> ${finalTotal}<hr>` +
-    `<strong>After Enemy Modifiers</strong><br>` +
-    `Stagger ×${staggerMultiplier}<br>` +
-    `Resistance ×${resistMultiplier}<br>` +
-    `Fragile ×${fragileMultiplier.toFixed(2)}<br>` +
-    `<strong>Total:</strong> ${enemyTotal}`;
-}
+    const staggerMultiplier = Number(document.getElementById('staggerState').value);
+    const resistMultiplier = Number(document.getElementById('resistState').value);
+
+    const fragileStacks =
+      Number(document.getElementById('fragile').value) +
+      Number(document.getElementById('slashFragile').value) +
+      Number(document.getElementById('bluntFragile').value) +
+      Number(document.getElementById('pierceFragile').value);
+
+    const fragileMultiplier = 1 + fragileStacks * 0.1;
+
+    let previous = 0;
+    let baseTotal = 0;
+    let finalTotal = 0;
+    let baseLog = [];
+    let finalLog = [];
+
+    for (let i = 1; i <= coins; i++) {
+      const head = document.getElementById(`coin${i}`)?.checked;
+      const crit = document.getElementById(`crit${i}`)?.checked;
+
+      let dmg = i === 1
+        ? (head ? basePower + coinPower : basePower)
+        : (head ? previous + coinPower : previous);
+
+      baseTotal += dmg;
+      baseLog.push(`Coin ${i}: ${dmg}`);
+
+      let final = dmg;
+      if (crit) final = Math.floor(final * 1.2);
+      final = Math.floor(final * (1 + damageUp));
+      if (i === coins) final = Math.floor(final * (1 + finalCoinBoost));
+
+      finalTotal += final;
+      finalLog.push(`Coin ${i}: ${final}`);
+
+      previous = dmg;
+    }
+
+    const enemyTotal = Math.floor(finalTotal * staggerMultiplier * resistMultiplier * fragileMultiplier);
+
+    document.getElementById('output').innerHTML =
+      `<strong>Normal Damage</strong><br>${baseLog.join('<br>')}<hr>` +
+      `<strong>Final Damage</strong><br>${finalLog.join('<br>')}<br><strong>Total:</strong> ${finalTotal}<hr>` +
+      `<strong>After Enemy Modifiers</strong><br>` +
+      `Stagger ×${staggerMultiplier}<br>` +
+      `Resistance ×${resistMultiplier}<br>` +
+      `Fragile ×${fragileMultiplier.toFixed(2)}<br>` +
+      `<strong>Total:</strong> ${enemyTotal}`;
+  }
 </script>
 </body>
 </html>
