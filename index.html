@@ -190,10 +190,12 @@ function calculate() {
   let enemyRuptureCount = clamp(+document.getElementById('enemyRuptureCount').value||0);
   let enemyRupturePotency = clamp(+document.getElementById('enemyRupturePotency').value||0);
 
-  let previous=0, finalTotal=0, baseLog=[], finalLog=[];
-
+  let previous=0, baseLog=[], finalLog=[];
   let ruptureStack=enemyRuptureCount;
   let rupturePotencyTotal=enemyRupturePotency;
+
+  let normalDamageTotal = 0;
+  let ruptureDamageTotal = 0;
 
   for(let i=1;i<=coinsVal;i++){
     const head=document.getElementById(`coin${i}`)?.checked;
@@ -209,28 +211,34 @@ function calculate() {
 
     baseLog.push(`Coin ${i}: Base ${dmg}`);
 
-    let ruptureDamage = ruptureStack > 0 ? Math.min(rupturePotencyTotal, 99) : 0;
-
     let final = dmg;
     if(crit) final = Math.floor(final*1.2);
     final = Math.floor(final*(1+damageUp));
     if(i===coinsVal) final = Math.floor(final*(1+finalCoinBoost));
 
-    finalTotal += final + ruptureDamage;
-    finalLog.push(`Coin ${i}: Base ${final}, Rupture +${ruptureDamage}, Total ${final + ruptureDamage}`);
+    // Normal damage affected by modifiers
+    const normalDmg = Math.floor(final*stagger*resist*fragileMult*protectionMult);
+    normalDamageTotal += normalDmg;
+
+    // Rupture damage per coin
+    let coinRupture = ruptureStack>0 ? Math.min(rupturePotencyTotal,99) : 0;
+    ruptureDamageTotal += coinRupture;
+
+    finalLog.push(`Coin ${i}: Base ${normalDmg}, Rupture +${coinRupture}, Total ${normalDmg+coinRupture}`);
 
     previous = dmg;
 
-    if(ruptureStack > 0) ruptureStack--;
-    if(ruptureStack === 0) rupturePotencyTotal = 0;
+    if(ruptureStack>0) ruptureStack--;
+    if(ruptureStack===0) rupturePotencyTotal=0;
   }
 
-  const baseCoinTotal = finalTotal - Math.min(rupturePotencyTotal, 99);
-  const enemyTotal = Math.floor(baseCoinTotal*stagger*resist*fragileMult*protectionMult) + Math.min(rupturePotencyTotal, 99);
+  const enemyTotal = normalDamageTotal + ruptureDamageTotal;
 
   document.getElementById('output').innerHTML=
     `<strong>Per-Coin Damage Breakdown</strong><br>${finalLog.join('<br>')}<hr>`+
-    `<strong>Total Damage after Enemy Modifiers</strong><br>${enemyTotal}<br>`+
+    `<strong>Normal Damage (with protection etc.)</strong>: ${normalDamageTotal}<br>`+
+    `<strong>Rupture Damage (flat)</strong>: ${ruptureDamageTotal}<br>`+
+    `<strong>Total Damage</strong>: ${enemyTotal}<hr>`+
     `<strong>Remaining Enemy Rupture</strong>: Potency ${rupturePotencyTotal}, Count ${ruptureStack}`;
 
   document.getElementById('enemyRupturePotency').value = clamp(rupturePotencyTotal);
