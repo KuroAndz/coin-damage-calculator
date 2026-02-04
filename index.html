@@ -17,7 +17,7 @@
 
     * { box-sizing: border-box; }
 
-    /* WIX-SAFE: no internal scrolling */
+    /* NORMAL WEBSITE SCROLL (GitHub Pages) */
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -26,18 +26,18 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      overflow: hidden; /* Wix controls page scroll */
-      padding: 16px;
+      overflow-y: auto; /* scrollbar restored */
+      min-height: 100vh;
+      padding: 24px;
     }
 
     .card {
       width: 100%;
-      max-width: 520px; /* responsive for Wix */
+      max-width: 560px;
       background: linear-gradient(180deg, #020617, #020617f0);
       padding: 22px;
       border-radius: 18px;
       box-shadow: 0 25px 50px rgba(0,0,0,.6);
-      overflow: visible;
     }
 
     h1 {
@@ -46,7 +46,7 @@
     }
 
     h2 {
-      margin: 18px 0 8px;
+      margin: 20px 0 8px;
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: .08em;
@@ -74,7 +74,7 @@
 
     button {
       width: 100%;
-      margin-top: 18px;
+      margin-top: 20px;
       padding: 12px;
       border-radius: 12px;
       border: none;
@@ -126,7 +126,7 @@
     .frag.pierce { background: rgba(192,132,252,.15); }
 
     .result {
-      margin-top: 16px;
+      margin-top: 18px;
       padding: 14px;
       background: var(--panel-soft);
       border-radius: 14px;
@@ -141,11 +141,8 @@
       margin: 10px 0;
     }
 
-    /* Mobile stacking */
     @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -215,11 +212,11 @@ function renderCoins() {
 }
 
 function calculate() {
-  const basePower = +basePower.value || 0;
-  const coinPower = +coinPower.value || 0;
-  const coins = +coinsInput.value || 0;
-  const damageUp = (+damageUp.value || 0) / 100;
-  const finalCoinBoost = (+finalCoinBoost.value || 0) / 100;
+  const basePowerVal = +basePower.value || 0;
+  const coinPowerVal = +coinPower.value || 0;
+  const coinsVal = +coins.value || 0;
+  const damageUpVal = (+damageUp.value || 0) / 100;
+  const finalCoinBoostVal = (+finalCoinBoost.value || 0) / 100;
 
   const staggerMultiplier = +staggerState.value;
   const resistMultiplier = +resistState.value;
@@ -233,20 +230,20 @@ function calculate() {
   let baseLog = [];
   let finalLog = [];
 
-  for (let i = 1; i <= coins; i++) {
+  for (let i = 1; i <= coinsVal; i++) {
     const head = document.getElementById(`coin${i}`)?.checked;
     const crit = document.getElementById(`crit${i}`)?.checked;
 
     let dmg = i === 1
-      ? (head ? basePower + coinPower : basePower)
-      : (head ? previous + coinPower : previous);
+      ? (head ? basePowerVal + coinPowerVal : basePowerVal)
+      : (head ? previous + coinPowerVal : previous);
 
     baseLog.push(`Coin ${i}: ${dmg}`);
 
     let final = dmg;
     if (crit) final = Math.floor(final * 1.2);
-    final = Math.floor(final * (1 + damageUp));
-    if (i === coins) final = Math.floor(final * (1 + finalCoinBoost));
+    final = Math.floor(final * (1 + damageUpVal));
+    if (i === coinsVal) final = Math.floor(final * (1 + finalCoinBoostVal));
 
     finalTotal += final;
     finalLog.push(`Coin ${i}: ${final}`);
@@ -263,8 +260,6 @@ function calculate() {
     `Fragile ×${fragileMultiplier.toFixed(2)}<br>` +
     `<strong>Total:</strong> ${enemyTotal}`;
 }
-
-const coinsInput = document.getElementById('coins');
 </script>
 </body>
 </html>
