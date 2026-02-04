@@ -1,271 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coin Damage Calculator</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #020617;
-      --panel-soft: #020617cc;
-      --input: #1e293b;
-      --accent: #38bdf8;
-      --accent-hover: #0ea5e9;
-      --text: #e5e7eb;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Coin Damage Calculator</title>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --bg:#0f172a;
+  --panel:#020617;
+  --panel-soft:#020617cc;
+  --input:#1e293b;
+  --accent:#38bdf8;
+  --accent-hover:#0ea5e9;
+  --text:#e5e7eb;
+}
 
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      overflow-y: auto; /* normal scrolling */
-    }
+* { box-sizing: border-box; }
 
-    .card {
-      width: 100%;
-      max-width: 520px;
-      background: linear-gradient(180deg, #020617, #020617f0);
-      padding: 22px;
-      border-radius: 18px;
-      box-shadow: 0 25px 50px rgba(0,0,0,.6);
-    }
+body {
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui, sans-serif;
+  display:flex;
+  justify-content:center;
+  overflow-y:auto;
+}
 
-    h1 {
-      text-align: center;
-      margin: 0 0 16px;
-      letter-spacing: .5px;
-    }
+.card {
+  width:100%;
+  max-width:920px;
+  background:linear-gradient(180deg,#020617,#020617f0);
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 25px 50px rgba(0,0,0,.6);
+}
 
-    h2 {
-      margin: 18px 0 8px;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      opacity: .8;
-    }
+h1 {
+  text-align:center;
+  margin-bottom:16px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+h2 {
+  font-size:14px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.8;
+  margin:16px 0 8px;
+}
 
-    label {
-      font-size: 13px;
-    }
+.layout {
+  display:grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap:20px;
+}
 
-    input[type=number], select {
-      width: 100%;
-      margin-top: 4px;
-      padding: 8px;
-      background: var(--input);
-      border: none;
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 13px;
-    }
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: var(--accent);
-      color: #020617;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 15px;
-    }
+label {
+  font-size:13px;
+}
 
-    button:hover { background: var(--accent-hover); }
+input, select {
+  width:100%;
+  padding:8px;
+  margin-top:4px;
+  border-radius:10px;
+  border:none;
+  background:var(--input);
+  color:var(--text);
+}
 
-    .coins {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+button {
+  margin-top:18px;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  color:#020617;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    .coin {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--input);
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 12px;
-    }
+button:hover { background:var(--accent-hover); }
 
-    .coin-controls label { margin-left: 8px; }
+.coins {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
 
-    .fragility-box {
-      background: var(--panel-soft);
-      padding: 12px;
-      border-radius: 14px;
-    }
+.coin {
+  background:var(--input);
+  padding:8px 10px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+}
 
-    .fragility-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
+.result {
+  background:var(--panel-soft);
+  padding:12px;
+  border-radius:14px;
+  font-size:13px;
+  line-height:1.4;
+}
 
-    .frag {
-      padding: 8px;
-      border-radius: 10px;
-      font-size: 12px;
-    }
+hr {
+  border:none;
+  border-top:1px solid #1e293b;
+  margin:8px 0;
+}
 
-    .frag span { font-weight: 700; display: block; margin-bottom: 4px; }
+.fragility-box {
+  background:var(--panel-soft);
+  padding:12px;
+  border-radius:14px;
+}
 
-    .frag.slash { background: rgba(248,113,113,.15); }
-    .frag.blunt { background: rgba(96,165,250,.15); }
-    .frag.pierce { background: rgba(192,132,252,.15); }
+.fragility-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:8px;
+}
 
-    .result {
-      margin-top: 16px;
-      padding: 14px;
-      background: var(--panel-soft);
-      border-radius: 14px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
+.frag {
+  padding:8px;
+  border-radius:10px;
+  font-size:12px;
+}
 
-    hr { border: none; border-top: 1px solid #1e293b; margin: 10px 0; }
-  </style>
+.frag span {
+  display:block;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.slash { background:rgba(248,113,113,.15); }
+.blunt { background:rgba(96,165,250,.15); }
+.pierce { background:rgba(192,132,252,.15); }
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Damage Calculator</h1>
-    <div class="layout">
-      <div class="inputs">
-        <h2>Base Stats</h2>
-        <div class="grid">
-          <label>Base Power<input type="number" id="basePower" value="0"></label>
-          <label>Coin Power<input type="number" id="coinPower" value="0"></label>
-          <label>Damage Up (%)<input type="number" id="damageUp" value="0"></label>
-          <label>Final Coin Boost (%)<input type="number" id="finalCoinBoost" value="0"></label>
-        </div>
+<div class="card">
+<h1>Damage Calculator</h1>
 
-        <h2>Coins</h2>
-        <label>Number of Coins<input type="number" id="coins" value="0" min="0" max="10" onchange="renderCoins()"></label>
-        <div class="coins" id="coinContainer"></div>
+<div class="layout">
+<!-- LEFT -->
+<div>
+<h2>Base Stats</h2>
+<div class="grid">
+  <label>Base Power<input type="number" id="basePower" value="0"></label>
+  <label>Coin Power<input type="number" id="coinPower" value="0"></label>
+  <label>Damage Up (%)<input type="number" id="damageUp" value="0"></label>
+  <label>Final Coin Boost (%)<input type="number" id="finalCoinBoost" value="0"></label>
+</div>
 
-        <h2>Enemy State</h2>
-        <div class="grid">
-          <label>Stagger<select id="staggerState"><option value="1">None</option><option value="2">Staggered ×2</option><option value="2.5">Staggered+ ×2.5</option><option value="3">Staggered++ ×3</option></select></label>
-          <label>Resistance<select id="resistState"><option value="1">None</option><option value="1.5">Fatal ×1.5</option><option value="1.25">Weak ×1.25</option><option value="0.75">Endure ×0.75</option><option value="0.5">Resist ×0.5</option></select></label>
-        </div>
+<h2>Coins</h2>
+<label>Number of Coins<input type="number" id="coins" value="0" min="0" max="10" onchange="renderCoins()"></label>
+<div class="coins" id="coinContainer"></div>
 
-        <h2>Fragility</h2>
-        <div class="fragility-box">
-          <label>General Fragile<input type="number" id="fragile" value="0"></label>
-          <div class="fragility-grid">
-            <div class="frag slash"><span>Slash</span><input type="number" id="slashFragile" value="0"></div>
-            <div class="frag blunt"><span>Blunt</span><input type="number" id="bluntFragile" value="0"></div>
-            <div class="frag pierce"><span>Pierce</span><input type="number" id="pierceFragile" value="0"></div>
-          </div>
-        </div>
+<h2>Enemy State</h2>
+<div class="grid">
+  <label>Stagger
+    <select id="staggerState">
+      <option value="1">None</option>
+      <option value="2">Staggered ×2</option>
+      <option value="2.5">Staggered+ ×2.5</option>
+      <option value="3">Staggered++ ×3</option>
+    </select>
+  </label>
+  <label>Resistance
+    <select id="resistState">
+      <option value="1">None</option>
+      <option value="1.5">Fatal ×1.5</option>
+      <option value="1.25">Weak ×1.25</option>
+      <option value="0.75">Endure ×0.75</option>
+      <option value="0.5">Resist ×0.5</option>
+    </select>
+  </label>
+</div>
 
-        <button onclick="calculate()">Calculate</button>
-      </div>
-
-      <div class="results">
-        <h2>Results</h2>
-        <div class="result" id="output">No calculation yet.</div>
-      </div>
-    </div>
+<h2>Fragility</h2>
+<div class="fragility-box">
+  <label>General Fragile<input type="number" id="fragile" value="0"></label>
+  <div class="fragility-grid">
+    <div class="frag slash"><span>Slash</span><input type="number" id="slashFragile" value="0"></div>
+    <div class="frag blunt"><span>Blunt</span><input type="number" id="bluntFragile" value="0"></div>
+    <div class="frag pierce"><span>Pierce</span><input type="number" id="pierceFragile" value="0"></div>
   </div>
-    </div>
+</div>
 
-    <button onclick="calculate()">Calculate</button>
-    <div class="result" id="output"></div>
-  </div>
+<button onclick="calculate()">Calculate</button>
+</div>
+
+<!-- RIGHT -->
+<div>
+<h2>Total Damage</h2>
+<div class="result" id="output">No calculation yet.</div>
+</div>
+
+</div>
+</div>
 
 <script>
-  function renderCoins() {
-    const container = document.getElementById('coinContainer');
-    container.innerHTML = '';
-    const count = Number(document.getElementById('coins').value);
+function renderCoins() {
+  const container = document.getElementById("coinContainer");
+  container.innerHTML = "";
+  const count = Number(document.getElementById("coins").value);
 
-    for (let i = 1; i <= count; i++) {
-      const div = document.createElement('div');
-      div.className = 'coin';
-      div.innerHTML = `<span>Coin ${i}</span>
-        <span class="coin-controls">
-          <label><input type="checkbox" id="coin${i}"> Head</label>
-          <label><input type="checkbox" id="crit${i}"> Crit</label>
-        </span>`;
-      container.appendChild(div);
-    }
+  for (let i = 1; i <= count; i++) {
+    container.innerHTML += `
+    <div class="coin">
+      <span>Coin ${i}</span>
+      <span>
+        <label><input type="checkbox" id="coin${i}"> Head</label>
+        <label><input type="checkbox" id="crit${i}"> Crit</label>
+      </span>
+    </div>`;
+  }
+}
+
+function calculate() {
+  const basePower = +basePower.value || 0;
+  const coinPower = +coinPower.value || 0;
+  const coins = +document.getElementById("coins").value || 0;
+  const damageUp = (+damageUp.value || 0) / 100;
+  const finalCoinBoost = (+finalCoinBoost.value || 0) / 100;
+
+  const stagger = +staggerState.value;
+  const resist = +resistState.value;
+
+  const fragileStacks =
+    (+fragile.value || 0) +
+    (+slashFragile.value || 0) +
+    (+bluntFragile.value || 0) +
+    (+pierceFragile.value || 0);
+
+  const fragileMult = 1 + fragileStacks * 0.1;
+
+  let prev = 0;
+  let baseLog = [];
+  let finalLog = [];
+  let finalTotal = 0;
+
+  for (let i = 1; i <= coins; i++) {
+    const head = document.getElementById(`coin${i}`).checked;
+    const crit = document.getElementById(`crit${i}`).checked;
+
+    let dmg = i === 1
+      ? (head ? basePower + coinPower : basePower)
+      : (head ? prev + coinPower : prev);
+
+    let final = dmg;
+    if (crit) final = Math.floor(final * 1.2);
+    final = Math.floor(final * (1 + damageUp));
+    if (i === coins) final = Math.floor(final * (1 + finalCoinBoost));
+
+    baseLog.push(`Coin ${i}: ${dmg}`);
+    finalLog.push(`Coin ${i}: ${final}`);
+    finalTotal += final;
+    prev = dmg;
   }
 
-  function calculate() {
-    const basePower = Number(document.getElementById('basePower').value) || 0;
-    const coinPower = Number(document.getElementById('coinPower').value) || 0;
-    const coins = Number(document.getElementById('coins').value) || 0;
-    const damageUp = (Number(document.getElementById('damageUp').value) || 0) / 100;
-    const finalCoinBoost = (Number(document.getElementById('finalCoinBoost').value) || 0) / 100;
+  const enemyTotal = Math.floor(finalTotal * stagger * resist * fragileMult);
 
-    const staggerMultiplier = Number(document.getElementById('staggerState').value);
-    const resistMultiplier = Number(document.getElementById('resistState').value);
-
-    const fragileStacks =
-      Number(document.getElementById('fragile').value) +
-      Number(document.getElementById('slashFragile').value) +
-      Number(document.getElementById('bluntFragile').value) +
-      Number(document.getElementById('pierceFragile').value);
-
-    const fragileMultiplier = 1 + fragileStacks * 0.1;
-
-    let previous = 0;
-    let baseTotal = 0;
-    let finalTotal = 0;
-    let baseLog = [];
-    let finalLog = [];
-
-    for (let i = 1; i <= coins; i++) {
-      const head = document.getElementById(`coin${i}`)?.checked;
-      const crit = document.getElementById(`crit${i}`)?.checked;
-
-      let dmg = i === 1
-        ? (head ? basePower + coinPower : basePower)
-        : (head ? previous + coinPower : previous);
-
-      baseTotal += dmg;
-      baseLog.push(`Coin ${i}: ${dmg}`);
-
-      let final = dmg;
-      if (crit) final = Math.floor(final * 1.2);
-      final = Math.floor(final * (1 + damageUp));
-      if (i === coins) final = Math.floor(final * (1 + finalCoinBoost));
-
-      finalTotal += final;
-      finalLog.push(`Coin ${i}: ${final}`);
-
-      previous = dmg;
-    }
-
-    const enemyTotal = Math.floor(finalTotal * staggerMultiplier * resistMultiplier * fragileMultiplier);
-
-    document.getElementById('output').innerHTML =
-      `<strong>Normal Damage</strong><br>${baseLog.join('<br>')}<hr>` +
-      `<strong>Final Damage</strong><br>${finalLog.join('<br>')}<br><strong>Total:</strong> ${finalTotal}<hr>` +
-      `<strong>After Enemy Modifiers</strong><br>` +
-      `Stagger ×${staggerMultiplier}<br>` +
-      `Resistance ×${resistMultiplier}<br>` +
-      `Fragile ×${fragileMultiplier.toFixed(2)}<br>` +
-      `<strong>Total:</strong> ${enemyTotal}`;
-  }
+  output.innerHTML = `
+<strong>Normal</strong><br>${baseLog.join("<br>")}
+<hr>
+<strong>Final</strong><br>${finalLog.join("<br>")}
+<strong>Total:</strong> ${finalTotal}
+<hr>
+<strong>Enemy Result:</strong> ${enemyTotal}
+`;
+}
 </script>
 </body>
 </html>
